@@ -12,14 +12,13 @@
    :subprotocol "sqlite"
    :subname     "tree_prun.db"})
 
-;TODO: pass data to query
-(defn- ExecuteQuery
+(defn- executeQuery
   [script data]
   (query
-   sqlite-db
-   [script]))
+   sqlite-db 
+   (into [script] data)))
 
-(defn- ExecuteNonQuery
+(defn- executeNonQuery
   [script data]
   (execute! 
    sqlite-db
@@ -81,36 +80,47 @@
   [data type]
   (map #(% data) (type projections)))
 
-(defn DataConverter
+(defn dataConverter
   [data type]
   (pmap #(apply (type make-entity) (getProjection % type)) data))
 
-(defn ExecuteScript
+(defn executeScript
   [dataRequest type script]
   (if (nil? type)
-    (ExecuteNonQuery (script scripts) dataRequest)
-    (DataConverter (ExecuteQuery (script scripts) dataRequest) type)))
+    (executeNonQuery (script scripts) dataRequest)
+    (dataConverter (executeQuery (script scripts) dataRequest) type)))
 
 (defn makeResponse
   [dataRequest type script]
   (try
     (DataResponse :ok
-                  (ExecuteScript dataRequest type script))
+                  (executeScript dataRequest type script))
     (catch Exception e 
       (DataResponse :error nil (vector (.getMessage e))))))
 
+
+
+
 (deftype GisRepository [] 
   AGisRepository
-  (getFeederCircuits [_ dataRequest]
-    (makeResponse dataRequest :feederCircuit :getFeederCircuits))
+  ;; (getFeederCircuits [_ dataRequest]
+  ;;   (makeResponse dataRequest :feederCircuit :getFeederCircuits))
 
   (getPoles [_ dataRequest]
-    (makeResponse dataRequest :pole :getPoles))
+    "when dataRequest has 1 parameter :getPoles script will be passed and search by fedderCircuitId
+     when dataRequest has 5 parameter :getPolesFilterCoords script will be passed and the first parameter is fedderCircuitId and 4 last are latitude and longitude range, in order."
+    (case (count dataRequest)
+       1 (makeResponse dataRequest :pole :getPoles)
+       5 (makeResponse dataRequest :pole :getPolesFilterCoords)
+       (DataResponse
+        :error
+        nil
+        "dataRequest has not the right number of parameters")))
 
   (getPowerTransformers [_ dataRequest]
     (makeResponse  dataRequest :powerTranformer :getPowerTranformers))
 
-  (getSwitch [_ dataRequest]
+  (getSwitches [_ dataRequest]
     (makeResponse dataRequest :switch :getSwitches))
 
   (getTowers [_ dataRequest] 

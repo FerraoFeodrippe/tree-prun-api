@@ -17,6 +17,8 @@ inner join  filter_poles on
                 Pole.id = filter_poles.pole_id
 inner join   Pole_FeederCircuit on
                 Pole.id = Pole_FeederCircuit.pole_id
+where       Pole.latitude BETWEEN ? and ?
+and         Pole.longitude BETWEEN ? and ?
 group by    Pole.id
             ,Pole.description
             ,Pole.latitude

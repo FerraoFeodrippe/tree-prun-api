@@ -116,3 +116,61 @@ CREATE TABLE "ServiceOrder" (
 	FOREIGN KEY("tree_pruning_id") REFERENCES "TreePruning"("id"),
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
+
+
+--index
+
+CREATE INDEX "FeederCircuit_name_index" ON "FeederCircuit" (
+	"name"
+);
+
+CREATE INDEX "FeederCircuit_lat_long_index" ON "FeederCircuit" (
+	"latitude",
+	"longitude"
+)
+
+CREATE INDEX "OperationalBase_name_index" ON "OperationalBase" (
+	"name"
+);
+
+CREATE INDEX "Pole_FeederCircuit_pole_id_feedder_circuit_id_index" ON "Pole_FeederCircuit" (
+	"pole_id",
+	"feeder_circuit_id"
+);
+
+CREATE INDEX "Pole_lat_long_index" ON "Pole" (
+	"latitude",
+	"longitude"
+);
+
+CREATE INDEX "PowerTransformar_lat_long_index" ON "PowerTransformer" (
+	"latitude",
+	"longitude"
+);
+
+CREATE INDEX "ServiceOrder_tree_pruning_id_index" ON "ServiceOrder" (
+	"tree_pruning_id"
+);
+
+CREATE INDEX "Switch_lat_long_index" ON "Switch" (
+	"latitude",
+	"longitude"
+);
+
+CREATE INDEX "Switch_switch_classification_index" ON "Switch" (
+	"switch_classification"
+);
+
+CREATE INDEX "Team_OperationalBase_team_id_operational_base_id_index" ON "Team_OperationalBase" (
+	"team_id",
+	"operational_base_id"
+);
+
+CREATE INDEX "Team_name_index" ON "Team" (
+	"name"
+);
+
+CREATE INDEX "Tower_lat_long_index" ON "Tower" (
+	"latitude",
+	"longitude"
+);

@@ -8,6 +8,7 @@
 
 (comment
   ;;;;some tests
-  (.getPoles rGis "AnythingForNow")
-  (.getFeederCircuits rGis "AnythingForNow"))
+  (.getPoles rGis [7 1 1 1 2])
+  ;;(.getFeederCircuits rGis [])
+  )
 

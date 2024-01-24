@@ -13,6 +13,7 @@
 
 (def scriptBinds
   [:getPoles
+   :getPolesFilterCoords
    :getFeederCircuits
    :getPowerTranformers
    :getPowerTranformers
