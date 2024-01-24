@@ -1,2 +1,5 @@
-Select  * 
-from    FeederCircuit
+Select  id
+        ,name
+        ,longitude
+        ,latitude
+from    FeederCircuit;

@@ -1,5 +1,6 @@
 (ns tree-prun-api.infra.scripts
-  (:require [clojure.string]))
+  (:require [clojure.string])
+  (:gen-class))
 
 (defn getScript
   ([typeName]
@@ -11,21 +12,24 @@
       (str "scripts/" (name typeName) ".sql")))]))
 
 (def scriptBinds
-  [:getpoles
+  [:getPoles
    :getFeederCircuits
    :getPowerTranformers
    :getPowerTranformers
    :getSwitches
    :getTowers
-   :getWires])
+   :getWires
+   
+   :insertPole])
 
-(def queries  
-  (reduce 
-   #(try 
+(def scripts  
+  (reduce
+   #(try
       (conj % (getScript %2))
-      (catch Exception e 
+      (catch Exception e
         (println ";" (.getMessage e))
-        %)) {} scriptBinds))
+        %))
+   {} scriptBinds))
 
 
 

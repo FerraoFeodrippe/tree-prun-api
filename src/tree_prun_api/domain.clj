@@ -12,9 +12,7 @@
    {:status status :data data :errors errors}))
 
 ;;;; ObjectValues
-(defrecord GeoCoordinate [Latitude Longitude])
-
-(defrecord UnitMeasure [unitInMeters])
+(defrecord GeoCoordinate [latitude longitude])
 
 ;;;; GIS
 
@@ -59,12 +57,12 @@
 ;;;;;;;; GIS Contracts
 (defprotocol AGisRepository
   "Repository contract for GIS"
-  (getFeederCircuits [dataRequest])
-  (getPoles [dataRequest])
-  (getPowerTransformers [dataRequest])
-  (getSwitch [dataRequest])
-  (getTowers [dataRequest])
-  (getWires [dataRequest]))
+  (getFeederCircuits [this dataRequest])
+  (getPoles [this dataRequest])
+  (getPowerTransformers [this dataRequest])
+  (getSwitch [this dataRequest])
+  (getTowers [this dataRequest])
+  (getWires [this dataRequest]))
 
 ;;;; Tree Management
 
@@ -72,13 +70,6 @@
            [id
             name
             geoCoordinate])
-
-(defrecord ServiceOrder
-           [id
-            description
-            classification
-            treePruning
-            observation])
 
 (defrecord Team
            [id
@@ -97,6 +88,13 @@
             distanceAt
             distanceBt
             distanceMt])
+
+(defrecord ServiceOrder
+           [id
+            description
+            classification
+            treePruning
+            observation])
 
 ;;;;;;;; Tree Management Contracts
 
