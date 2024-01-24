@@ -1,7 +1,7 @@
 
-Select  id
+SELECT  id
         ,operational_id
         ,name
         ,longitude
         ,latitude
-from    FeederCircuit;
+FROM    FeederCircuit;

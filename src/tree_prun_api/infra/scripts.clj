@@ -1,25 +1,36 @@
 (ns tree-prun-api.infra.scripts
-  (:require [clojure.string])
+  (:require [clojure.string]
+            [clojure.java.io])
   (:gen-class))
 
 (defn getScript
   ([typeName]
    [typeName
-    (slurp
-     (clojure.string/replace
-      *file*
-      #"scripts.clj"
-      (str "scripts/" (name typeName) ".sql")))]))
+    (slurp 
+     (-> 
+      (clojure.java.io/file 
+       (clojure.java.io/resource "infra") 
+       "scripts" 
+        (str (name typeName) ".sql")) 
+      .getPath))]))
 
 (def scriptBinds
   [:getPoles
    :getPolesFilterCoords
+
    :getFeederCircuits
+
    :getPowerTranformers
-   :getPowerTranformers
+   :getPowerTranformersFilterCoords
+
    :getSwitches
+   :getSwitchesFilterCoords
+
    :getTowers
+   :getTowersFilterCoords
+
    :getWires
+   :getWiresFilterCoords
    
    :insertPole])
 

@@ -38,25 +38,29 @@
    [:id :description makeGeoCoordinate
     ;;TOTHINK: should I mount full entity for feederCircuits or just ids? 
     ;;for now just ids
-    #(-> % :feeder_operational_ids (.split ","))
+    #(-> % :feeder_circuit_operational_ids (.split ","))
     :zone]
    
    :powerTranformer 
    [:id :description makeGeoCoordinate]
 
    :switch
-   [:id :description :switch_classification makeGeoCoordinate]
+   [:id :description :feeder_circuit_operational_id 
+    :switch_classification makeGeoCoordinate]
 
    :tower 
-   [:id :description makeGeoCoordinate]
+   [:id :description
+    :feeder_circuit_operational_id makeGeoCoordinate
+    :zone :height]
 
    :wire
    [:id 
     :description 
+    :feeder_circuit_operational_id
     :network 
     :wire_specification
-    :zone
-    :wireGauge 
+    :wire_gauge
+    :zone 
     #(->GeoCoordinate (:latitude1 %) (:longitude1 %))
     #(->GeoCoordinate (:latitude2 %) (:longitude2 %))
     :wire_length]
@@ -98,7 +102,7 @@
     (catch Exception e 
       (DataResponse :error nil (vector (.getMessage e))))))
 
-(deftype GisRepository [] 
+(deftype GisRepository []
   AGisRepository
   ;; (getFeederCircuits [_ dataRequest]
   ;;   (makeResponse dataRequest :feederCircuit :getFeederCircuits))
@@ -107,24 +111,50 @@
     "when dataRequest has 1 parameter :getPoles script will be passed and search by fedderCircuitId
      when dataRequest has 5 parameter :getPolesFilterCoords script will be passed and the first parameter is fedderCircuitId and 4 last are latitude and longitude range, in order."
     (case (count dataRequest)
-       1 (makeResponse dataRequest :pole :getPoles)
-       5 (makeResponse dataRequest :pole :getPolesFilterCoords)
-       (DataResponse
-        :error
-        nil
-        "dataRequest has not the right number of parameters")))
+      1 (makeResponse dataRequest :pole :getPoles)
+      5 (makeResponse dataRequest :pole :getPolesFilterCoords)
+      (DataResponse
+       :error
+       nil
+       "dataRequest has not the right number of parameters")))
 
   (getPowerTransformers [_ dataRequest]
-    (makeResponse  dataRequest :powerTranformer :getPowerTranformers))
+    (makeResponse  dataRequest :powerTranformer :getPowerTranformers)
+    (case (count dataRequest)
+      0 (makeResponse dataRequest :powerTranformer :getPowerTranformers)
+      4 (makeResponse dataRequest :powerTranformer :getPowerTranformersFilterCoords)
+      (DataResponse
+       :error
+       nil
+       "dataRequest has not the right number of parameters")))
 
   (getSwitches [_ dataRequest]
-    (makeResponse dataRequest :switch :getSwitches))
+    (case (count dataRequest)
+      1 (makeResponse dataRequest :switch :getSwitches)
+      5 (makeResponse dataRequest :switch :getSwitchesFilterCoords)
+      (DataResponse
+       :error
+       nil
+       "dataRequest has not the right number of parameters")))
 
-  (getTowers [_ dataRequest] 
-    (makeResponse dataRequest :tower :getTowers))
+  (getTowers [_ dataRequest]
+    (case (count dataRequest)
+      1 (makeResponse dataRequest :tower :getTowers)
+      5 (makeResponse dataRequest :tower :getTowersFilterCoords)
+      (DataResponse
+       :error
+       nil
+       "dataRequest has not the right number of parameters")))
 
-  (getWires [_ dataRequest] 
-    (makeResponse dataRequest :wire :getWires)))
+  (getWires [_ dataRequest]
+    (case (count dataRequest)
+      1 (makeResponse dataRequest :wire :getWires)
+      5 (makeResponse
+           (into dataRequest (rest dataRequest))  :wire :getWiresFilterCoords)
+      (DataResponse
+       :error
+       nil
+       "dataRequest has not the right number of parameters"))))
 
 ;;;; Those below funcions are just will help to insert data for simplicity
 ;;;; for some operations what are not designed for

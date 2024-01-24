@@ -3,11 +3,12 @@ CREATE TABLE sqlite_sequence(name,seq);
 
 CREATE TABLE "FeederCircuit" (
 	"id"	INTEGER,
+	"operational_id"	TEXT NOT NULL UNIQUE,
 	"name"	TEXT NOT NULL,
 	"latitude"	NUMERIC NOT NULL,
 	"longitude"	NUMERIC NOT NULL,
 	PRIMARY KEY("id" AUTOINCREMENT)
-);
+)
 
 CREATE TABLE "Pole" (
 	"id"	INTEGER,
@@ -37,36 +38,42 @@ CREATE TABLE "PowerTransformer" (
 CREATE TABLE "Tower" (
 	"id"	INTEGER,
 	"description"	TEXT,
+	"feeder_circuit_id"	INTEGER NOT NULL,
 	"latitude"	NUMERIC NOT NULL,
 	"longitude"	NUMERIC NOT NULL,
 	"height"	NUMERIC NOT NULL,
+	"zone"	TEXT NOT NULL,
+	FOREIGN KEY("feeder_circuit_id") REFERENCES "FeederCircuit"("id"),
 	PRIMARY KEY("id" AUTOINCREMENT)
 );
 
 CREATE TABLE "Wire" (
 	"id"	INTEGER,
 	"description"	TEXT,
+	"feeder_circuit_id"	INTEGER NOT NULL,
 	"network"	TEXT NOT NULL,
 	"wire_specification"	TEXT NOT NULL,
 	"zone"	TEXT NOT NULL,
 	"wire_gauge"	NUMERIC NOT NULL,
 	"latitude1"	NUMERIC NOT NULL,
 	"longitude1"	NUMERIC NOT NULL,
-	"latitude2"	INTEGER NOT NULL,
+	"latitude2"	NUMERIC NOT NULL,
 	"longitude2"	NUMERIC NOT NULL,
 	"wire_length"	NUMERIC NOT NULL,
-	PRIMARY KEY("id" AUTOINCREMENT)
-);
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("feeder_circuit_id") REFERENCES "FeederCircuit"("id")
+)
 
 CREATE TABLE "Switch" (
 	"id"	INTEGER,
 	"description"	TEXT,
 	"switch_classification"	TEXT NOT NULL,
+	"feeder_circuit_id"	INTEGER NOT NULL,
 	"latitude"	NUMERIC NOT NULL,
 	"longitude"	NUMERIC NOT NULL,
-	PRIMARY KEY("id" AUTOINCREMENT)
-);
-
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("feeder_circuit_id") REFERENCES "FeederCircuit"("id")
+)
 
 CREATE TABLE "OperationalBase" (
 	"id"	INTEGER,

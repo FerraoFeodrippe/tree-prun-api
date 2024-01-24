@@ -33,23 +33,26 @@
 (defrecord Switch
            [id
             description
+            feederCircuit 
             switchClassification
             geoCoordinate])
 
 (defrecord Tower
            [id
             description
+            feederCircuit 
             geoCoordinate
             zone
             height])
 
 (defrecord Wire
            [id
-            description
+            description 
+            feederCircuit
             network
             wireSpecification
-            zone
             wireGauge
+            zone
             geoCoordinate1
             geoCoordinate2
             wireLength])
