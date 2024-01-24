@@ -16,7 +16,7 @@
 
 ;;;; GIS
 
-(defrecord FeederCircuit [id name geoCoordinate])
+(defrecord FeederCircuit [id operational_id name geoCoordinate])
 
 (defrecord Pole 
            [id

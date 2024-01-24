@@ -7,8 +7,13 @@
 (def rGis (->GisRepository))
 
 (comment
+  *file*
+  
   ;;;;some tests
+  (.getPoles rGis [7])
   (.getPoles rGis [7 1 1 1 2])
   ;;(.getFeederCircuits rGis [])
   )
+
+
 

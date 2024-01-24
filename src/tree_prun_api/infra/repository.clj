@@ -38,7 +38,7 @@
    [:id :description makeGeoCoordinate
     ;;TOTHINK: should I mount full entity for feederCircuits or just ids? 
     ;;for now just ids
-    #(map read-string (-> % :feeder_circuit_ids (.split ",")))
+    #(-> % :feeder_operational_ids (.split ","))
     :zone]
    
    :powerTranformer 
@@ -97,9 +97,6 @@
                   (executeScript dataRequest type script))
     (catch Exception e 
       (DataResponse :error nil (vector (.getMessage e))))))
-
-
-
 
 (deftype GisRepository [] 
   AGisRepository
