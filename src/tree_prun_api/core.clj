@@ -6,3 +6,8 @@
 
 (def rGis (->GisRepository))
 
+(comment
+  ;;;;some tests
+  (.getPoles rGis "AnythingForNow")
+  (.getFeederCircuits rGis "AnythingForNow"))
+
