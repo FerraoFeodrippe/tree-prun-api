@@ -4,29 +4,35 @@
             [ring.middleware.defaults :refer :all]
             [compojure.core :refer :all]
             [compojure.route :as route]
-            [ring.adapter.jetty :refer [run-jetty]])
+            [ring.adapter.jetty :refer [run-jetty]]
+            [clojure.data.json :as json])
   (:gen-class))
 
-(defroutes app
-  (GET "/" [] "OK, that is working...")
-  (GET "/kiko" [] "kiko route...")
-  (GET "/buba" [] "buba route...")
-  (GET "/pimpo" [] "pimpo route...")
-  (GET "/tirolito" [] "tiolito route...")
+(def rGis (->GisRepository))
+
+(defroutes app-routes
+  (GET "/swagger" [] "OK, that is working. Swagger in development...")
+  (GET "/poles/:feeder_circuit_operational_id"
+    {{feeder_circuit_operational_id  :feeder_circuit_operational_id} :params
+     {coords "coords"} :query-params}
+    (json/write-str
+     (.getPoles
+      rGis
+      (into [feeder_circuit_operational_id]
+            (map #(Double/parseDouble %) 
+                 (if (vector? coords) coords [coords]))))))
+  
   (route/not-found "<h1>Page not found</h1>"))
 
 (def site
-  (wrap-defaults app site-defaults))
+  (wrap-defaults app-routes site-defaults))
 
 (run-jetty site {:port 3000
                  :join? false})
 
-(def rGis (->GisRepository))
-
 (comment
   ;;;;some tests
   
-  (.getPoles rGis ["REC_01"])
   (.getPoles rGis ["REC_01" 1 1 1 2])
   (.getPoles rGis ["REC_02" 1 1 1 2])
   (.getPoles rGis ["REC_02" 1 1 1 1])
