@@ -108,8 +108,8 @@
   ;;   (makeResponse dataRequest :feederCircuit :getFeederCircuits))
 
   (getPoles [_ dataRequest]
-    "when dataRequest has 1 parameter :getPoles script will be passed and search by fedderCircuitId
-     when dataRequest has 5 parameter :getPolesFilterCoords script will be passed and the first parameter is fedderCircuitId and 4 last are latitude and longitude range, in order."
+    "when dataRequest has 1 parameter getPoles script will be passed and search by fedderCircuitId
+     when dataRequest has 5 parameters getPolesFilterCoords script will be passed and the first parameter is fedderCircuitId and last 4 are latitude and longitude range, in order."
     (case (count dataRequest)
       1 (makeResponse dataRequest :pole :getPoles)
       5 (makeResponse dataRequest :pole :getPolesFilterCoords)
@@ -119,6 +119,8 @@
        "dataRequest has not the right number of parameters")))
 
   (getPowerTransformers [_ dataRequest]
+    "when dataRequest has 0 parameter getPowerTranformers script will be passed and search by fedderCircuitId
+     when dataRequest has 4 parameters getPowerTranformersFilterCoords latitude and longitude range, in order."
     (makeResponse  dataRequest :powerTranformer :getPowerTranformers)
     (case (count dataRequest)
       0 (makeResponse dataRequest :powerTranformer :getPowerTranformers)
@@ -129,6 +131,9 @@
        "dataRequest has not the right number of parameters")))
 
   (getSwitches [_ dataRequest]
+    "when dataRequest has 1 parameter getSwitches script will be passed and search by fedderCircuitId
+     when dataRequest has 5 parameters getSwitchesFilterCoords script will be passed and the first parameter is fedderCircuitId and last 4 are latitude and longitude range, in order."
+
     (case (count dataRequest)
       1 (makeResponse dataRequest :switch :getSwitches)
       5 (makeResponse dataRequest :switch :getSwitchesFilterCoords)
@@ -138,6 +143,9 @@
        "dataRequest has not the right number of parameters")))
 
   (getTowers [_ dataRequest]
+    "when dataRequest has 1 parameter getTowers script will be passed and search by fedderCircuitId
+     when dataRequest has 5 parameters getTowersFilterCoords script will be passed and the first parameter is fedderCircuitId and last 4 are latitude and longitude range, in order."
+
     (case (count dataRequest)
       1 (makeResponse dataRequest :tower :getTowers)
       5 (makeResponse dataRequest :tower :getTowersFilterCoords)
@@ -147,18 +155,15 @@
        "dataRequest has not the right number of parameters")))
 
   (getWires [_ dataRequest]
+    "when dataRequest has 1 parameter getWires script will be passed and search by fedderCircuitId
+     when dataRequest has 5 parameters getWiresFilterCoords script will be passed and the first parameter is fedderCircuitId and last 4 are latitude and longitude range, in order."
+
     (case (count dataRequest)
       1 (makeResponse dataRequest :wire :getWires)
       5 (makeResponse
-           (into dataRequest (rest dataRequest))  :wire :getWiresFilterCoords)
+         ;;;;here coordinates are replicated to put on script
+         (into dataRequest (rest dataRequest))  :wire :getWiresFilterCoords)
       (DataResponse
        :error
        nil
        "dataRequest has not the right number of parameters"))))
-
-;;;; Those below funcions are just will help to insert data for simplicity
-;;;; for some operations what are not designed for
-
-
-
-

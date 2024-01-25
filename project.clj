@@ -5,5 +5,14 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.11.1"]
                  [org.clojure/java.jdbc "0.7.12"]
-                 [org.xerial/sqlite-jdbc "3.45.0.0"]]
-  :repl-options {:init-ns tree-prun-api.core})
+                 [org.xerial/sqlite-jdbc "3.45.0.0"]
+                 [ring/ring-core "1.11.0"]
+                 [ring/ring-jetty-adapter "1.11.0"]
+                 [ring/ring-defaults "0.4.0"]
+                 [compojure "1.7.0"]
+                 [org.clojure/data.json "2.5.0"]
+                 [clj-http "3.12.3"]]
+  :repl-options {:init-ns tree-prun-api.core}
+  profiles
+  {:dev {:dependencies [[ring/ring-mock "0.4.0"]]}})
+  

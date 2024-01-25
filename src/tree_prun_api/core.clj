@@ -1,13 +1,31 @@
 (ns tree-prun-api.core
-  (:require [tree-prun-api.infra.repository :as r :refer [->GisRepository]])
+  (:require [tree-prun-api.infra.repository :as r :refer [->GisRepository]]
+            [tree-prun-api.services]
+            [ring.middleware.defaults :refer :all]
+            [compojure.core :refer :all]
+            [compojure.route :as route]
+            [ring.adapter.jetty :refer [run-jetty]])
   (:gen-class))
+
+(defroutes app
+  (GET "/" [] "OK, that is working...")
+  (GET "/kiko" [] "kiko route...")
+  (GET "/buba" [] "buba route...")
+  (GET "/pimpo" [] "pimpo route...")
+  (GET "/tirolito" [] "tiolito route...")
+  (route/not-found "<h1>Page not found</h1>"))
+
+(def site
+  (wrap-defaults app site-defaults))
+
+(run-jetty site {:port 3000
+                 :join? false})
 
 (def rGis (->GisRepository))
 
 (comment
-  *file*
-  
   ;;;;some tests
+  
   (.getPoles rGis ["REC_01"])
   (.getPoles rGis ["REC_01" 1 1 1 2])
   (.getPoles rGis ["REC_02" 1 1 1 2])
