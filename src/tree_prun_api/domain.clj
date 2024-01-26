@@ -61,11 +61,11 @@
 (defprotocol AGisRepository
   "Repository contract for GIS"
   ;;(getFeederCircuits [this dataRequest])
-  (getPoles [this {:keys [feeder_circuit_operational_id, coords]}] )
-  (getPowerTransformers [this {:keys [coords]}])
-  (getSwitches [this {:keys [feeder_circuit_operational_id, coords]}])
-  (getTowers [this {:keys [feeder_circuit_operational_id, coords]}])
-  (getWires [this {:keys [feeder_circuit_operational_id, coords]}]))
+  (getPoles [this feeder_circuit_operational_id coords])
+  (getPowerTransformers [this coords])
+  (getSwitches [this feeder_circuit_operational_id coords])
+  (getTowers [this feeder_circuit_operational_id coords])
+  (getWires [this feeder_circuit_operational_id coords]))
 
 ;;;; Tree Management
 

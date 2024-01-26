@@ -34,16 +34,16 @@
      {coords "coords"} :query-params}
     (response
      (.getPoles
-      rGis
-      {:feeder_circuit_operational_id feeder_circuit_operational_id
-       :coords (coordsStrToDouble coords)})))
+      rGis 
+      feeder_circuit_operational_id 
+      (coordsStrToDouble coords))))
 
   (GET "/power_transformers"
     {{coords "coords"} :query-params}
     (response
      (.getPowerTransformers
       rGis
-      {:coords (coordsStrToDouble coords)})))
+      (coordsStrToDouble coords))))
 
   (GET "/switches/:feeder_circuit_operational_id"
     {{feeder_circuit_operational_id  :feeder_circuit_operational_id} :params
@@ -51,8 +51,8 @@
     (response
      (.getSwitches
       rGis
-      {:feeder_circuit_operational_id feeder_circuit_operational_id
-       :coords (coordsStrToDouble coords)})))
+      feeder_circuit_operational_id
+      (coordsStrToDouble coords))))
 
   (GET "/towers/:feeder_circuit_operational_id"
     {{feeder_circuit_operational_id  :feeder_circuit_operational_id} :params
@@ -60,8 +60,8 @@
     (response
      (.getTowers
       rGis
-      {:feeder_circuit_operational_id feeder_circuit_operational_id
-       :coords (coordsStrToDouble coords)})))
+      feeder_circuit_operational_id
+      (coordsStrToDouble coords))))
 
   (GET "/wires/:feeder_circuit_operational_id"
     {{feeder_circuit_operational_id  :feeder_circuit_operational_id} :params
@@ -69,8 +69,8 @@
     (response
      (.getWires
       rGis
-      {:feeder_circuit_operational_id feeder_circuit_operational_id
-       :coords (coordsStrToDouble coords)})))
+      feeder_circuit_operational_id
+      (coordsStrToDouble coords))))
 
   (not-found "<h1>Page not found</h1>"))
 

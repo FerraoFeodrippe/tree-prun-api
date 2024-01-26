@@ -124,7 +124,7 @@
   ;; (getFeederCircuits [_ dataRequest]
   ;; (makeResponse dataRequest :feederCircuit :getFeederCircuits))
 
-  (getPoles [_ {:keys [feeder_circuit_operational_id, coords]}]
+  (getPoles [_ feeder_circuit_operational_id coords]
     "when dataRequest has 1 parameter getPoles script will be passed and search by fedderCircuitId
      when dataRequest has 5 parameters getPolesFilterCoords script will be passed and the first parameter is fedderCircuitId and last 4 are latitude and longitude range, in order."
     (let [dataRequest (makeDataRequest feeder_circuit_operational_id coords)
@@ -137,7 +137,7 @@
          nil
          "dataRequest has not the right number of parameters"))))
 
-  (getPowerTransformers [_ {:keys [coords]}]
+  (getPowerTransformers [_ coords]
     "when dataRequest has 0 parameter getPowerTranformers script will be passed and search by fedderCircuitId
      when dataRequest has 4 parameters getPowerTranformersFilterCoords latitude and longitude range, in order."
     (let [dataRequest (makeDataRequest coords)
@@ -150,7 +150,7 @@
          nil
          "dataRequest has not the right number of parameters"))))
 
-  (getSwitches [_ {:keys [feeder_circuit_operational_id, coords]}]
+  (getSwitches [_ feeder_circuit_operational_id coords]
     "when dataRequest has 1 parameter getSwitches script will be passed and search by fedderCircuitId
      when dataRequest has 5 parameters getSwitchesFilterCoords script will be passed and the first parameter is fedderCircuitId and last 4 are latitude and longitude range, in order."
     (let [dataRequest (makeDataRequest feeder_circuit_operational_id coords)
@@ -163,7 +163,7 @@
          nil
          "dataRequest has not the right number of parameters"))))
 
-  (getTowers [_ {:keys [feeder_circuit_operational_id, coords]}]
+  (getTowers [_ feeder_circuit_operational_id coords]
     "when dataRequest has 1 parameter getTowers script will be passed and search by fedderCircuitId
      when dataRequest has 5 parameters getTowersFilterCoords script will be passed and the first parameter is fedderCircuitId and last 4 are latitude and longitude range, in order."
     (let [dataRequest (makeDataRequest feeder_circuit_operational_id coords)
@@ -176,7 +176,7 @@
          nil
          "dataRequest has not the right number of parameters"))))
 
-  (getWires [_ {:keys [feeder_circuit_operational_id, coords]}]
+  (getWires [_ feeder_circuit_operational_id coords]
     "when dataRequest has 1 parameter getWires script will be passed and search by fedderCircuitId
      when dataRequest has 5 parameters getWiresFilterCoords script will be passed and the first parameter is fedderCircuitId and last 4 are latitude and longitude range, in order."
 
