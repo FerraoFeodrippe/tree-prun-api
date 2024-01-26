@@ -60,12 +60,12 @@
 ;;;;;;;; GIS Contracts
 (defprotocol AGisRepository
   "Repository contract for GIS"
-  ;;(getFeederCircuits [this dataRequest] "dataRequest should follow defrecord FeederCirtuit")
-  (getPoles [this dataRequest] "dataRequest should follow defrecord Pole")
-  (getPowerTransformers [this dataRequest] "dataRequest should follow defrecord PowerTransform")
-  (getSwitches [this dataRequest] "dataRequest should follow defrecord Switch")
-  (getTowers [this dataRequest] "dataRequest should follow defrecord Tower")
-  (getWires [this dataRequest] "dataRequest should follow defrecord Wire"))
+  ;;(getFeederCircuits [this dataRequest])
+  (getPoles [this {:keys [feeder_circuit_operational_id, coords]}] )
+  (getPowerTransformers [this {:keys [coords]}])
+  (getSwitches [this {:keys [feeder_circuit_operational_id, coords]}])
+  (getTowers [this {:keys [feeder_circuit_operational_id, coords]}])
+  (getWires [this {:keys [feeder_circuit_operational_id, coords]}]))
 
 ;;;; Tree Management
 

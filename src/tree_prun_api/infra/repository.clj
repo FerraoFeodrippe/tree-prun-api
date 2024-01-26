@@ -4,7 +4,8 @@
                                                 make-entity
                                                 ->GeoCoordinate]]
             [tree-prun-api.infra.scripts :refer [scripts]]
-            [clojure.java.jdbc :refer [query execute!]])
+            [clojure.java.jdbc :refer [query execute!]]
+            [clojure.string :refer [blank?]])
   (:gen-class))
 
 (def sqlite-db
@@ -102,68 +103,90 @@
     (catch Exception e 
       (DataResponse :error nil (vector (.getMessage e))))))
 
+(defn elementToVector
+  [element]
+  (if  (blank? (str element))
+    []
+    (if (vector? element)
+      element
+      [element])))
+
+(defn makeDataRequest
+  ([element]
+   (elementToVector element))
+  ([element & restElements]
+   (into
+    (elementToVector element)
+    (apply makeDataRequest restElements))))
+
 (deftype GisRepository []
   AGisRepository
   ;; (getFeederCircuits [_ dataRequest]
-  ;;   (makeResponse dataRequest :feederCircuit :getFeederCircuits))
+  ;; (makeResponse dataRequest :feederCircuit :getFeederCircuits))
 
-  (getPoles [_ dataRequest]
+  (getPoles [_ {:keys [feeder_circuit_operational_id, coords]}]
     "when dataRequest has 1 parameter getPoles script will be passed and search by fedderCircuitId
      when dataRequest has 5 parameters getPolesFilterCoords script will be passed and the first parameter is fedderCircuitId and last 4 are latitude and longitude range, in order."
-    (case (count dataRequest)
-      1 (makeResponse dataRequest :pole :getPoles)
-      5 (makeResponse dataRequest :pole :getPolesFilterCoords)
-      (DataResponse
-       :error
-       nil
-       "dataRequest has not the right number of parameters")))
+    (let [dataRequest (makeDataRequest feeder_circuit_operational_id coords)
+          pMakeResponse (partial makeResponse dataRequest :pole)]
+      (case (count dataRequest)
+        1 (pMakeResponse :getPoles)
+        5 (pMakeResponse :getPolesFilterCoords)
+        (DataResponse
+         :error
+         nil
+         "dataRequest has not the right number of parameters"))))
 
-  (getPowerTransformers [_ dataRequest]
+  (getPowerTransformers [_ {:keys [coords]}]
     "when dataRequest has 0 parameter getPowerTranformers script will be passed and search by fedderCircuitId
      when dataRequest has 4 parameters getPowerTranformersFilterCoords latitude and longitude range, in order."
-    (makeResponse  dataRequest :powerTranformer :getPowerTranformers)
-    (case (count dataRequest)
-      0 (makeResponse dataRequest :powerTranformer :getPowerTranformers)
-      4 (makeResponse dataRequest :powerTranformer :getPowerTranformersFilterCoords)
-      (DataResponse
-       :error
-       nil
-       "dataRequest has not the right number of parameters")))
+    (let [dataRequest (makeDataRequest coords)
+          pMakeResponse (partial makeResponse dataRequest :powerTranformer)]
+      (case (count dataRequest)
+        0 (pMakeResponse :getPowerTranformers)
+        4 (pMakeResponse :getPowerTranformersFilterCoords)
+        (DataResponse
+         :error
+         nil
+         "dataRequest has not the right number of parameters"))))
 
-  (getSwitches [_ dataRequest]
+  (getSwitches [_ {:keys [feeder_circuit_operational_id, coords]}]
     "when dataRequest has 1 parameter getSwitches script will be passed and search by fedderCircuitId
      when dataRequest has 5 parameters getSwitchesFilterCoords script will be passed and the first parameter is fedderCircuitId and last 4 are latitude and longitude range, in order."
+    (let [dataRequest (makeDataRequest feeder_circuit_operational_id coords)
+          pMakeResponse (partial makeResponse dataRequest :switch)]
+      (case (count dataRequest)
+        1 (pMakeResponse :getSwitches)
+        5 (pMakeResponse :getSwitchesFilterCoords)
+        (DataResponse
+         :error
+         nil
+         "dataRequest has not the right number of parameters"))))
 
-    (case (count dataRequest)
-      1 (makeResponse dataRequest :switch :getSwitches)
-      5 (makeResponse dataRequest :switch :getSwitchesFilterCoords)
-      (DataResponse
-       :error
-       nil
-       "dataRequest has not the right number of parameters")))
-
-  (getTowers [_ dataRequest]
+  (getTowers [_ {:keys [feeder_circuit_operational_id, coords]}]
     "when dataRequest has 1 parameter getTowers script will be passed and search by fedderCircuitId
      when dataRequest has 5 parameters getTowersFilterCoords script will be passed and the first parameter is fedderCircuitId and last 4 are latitude and longitude range, in order."
+    (let [dataRequest (makeDataRequest feeder_circuit_operational_id coords)
+          pMakeResponse (partial makeResponse dataRequest :tower)]
+      (case (count dataRequest)
+        1 (pMakeResponse :getTowers)
+        5 (pMakeResponse :getTowersFilterCoords)
+        (DataResponse
+         :error
+         nil
+         "dataRequest has not the right number of parameters"))))
 
-    (case (count dataRequest)
-      1 (makeResponse dataRequest :tower :getTowers)
-      5 (makeResponse dataRequest :tower :getTowersFilterCoords)
-      (DataResponse
-       :error
-       nil
-       "dataRequest has not the right number of parameters")))
-
-  (getWires [_ dataRequest]
+  (getWires [_ {:keys [feeder_circuit_operational_id, coords]}]
     "when dataRequest has 1 parameter getWires script will be passed and search by fedderCircuitId
      when dataRequest has 5 parameters getWiresFilterCoords script will be passed and the first parameter is fedderCircuitId and last 4 are latitude and longitude range, in order."
 
-    (case (count dataRequest)
-      1 (makeResponse dataRequest :wire :getWires)
-      5 (makeResponse
-         ;;;;here coordinates are replicated to put on script
-         (into dataRequest (rest dataRequest))  :wire :getWiresFilterCoords)
-      (DataResponse
-       :error
-       nil
-       "dataRequest has not the right number of parameters"))))
+
+    (let [dataRequest (makeDataRequest feeder_circuit_operational_id coords)
+          pMakeResponse (partial makeResponse (into dataRequest coords) :wire)]
+      (case (count dataRequest)
+        1 (pMakeResponse :getWires)
+        5 (pMakeResponse :getWiresFilterCoords)
+        (DataResponse
+         :error
+         nil
+         "dataRequest has not the right number of parameters")))))
