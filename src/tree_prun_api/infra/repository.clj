@@ -1,30 +1,24 @@
 (ns tree-prun-api.infra.repository
-  (:require [tree-prun-api.domain :as d :refer [AGisRepository 
+  (:require [tree-prun-api.domain :as d :refer [AGisRepository
                                                 DataResponse
                                                 make-entity
                                                 ->GeoCoordinate]]
             [tree-prun-api.infra.scripts :refer [scripts]]
-            [clojure.java.jdbc :refer [query execute!]]
+            [next.jdbc :as jdbc]
+            [next.jdbc.result-set :as rs]
             [clojure.string :refer [blank?]])
   (:gen-class))
 
-(def sqlite-db
-  {:classname "org.sqlite.JDBC"
-   :subprotocol "sqlite"
-   :subname     "tree_prun.db"})
+(def sqlite-db {:dbtype "sqlite" :dbname "tree_prun.db"})
 
-(defn- executeQuery
-  [script data]
-  (query
-   sqlite-db 
-   (into [script] data)))
+(def ds (jdbc/get-datasource sqlite-db))
 
-(defn- executeNonQuery
+(defn- executeCommand
   [script data]
-  (execute! 
-   sqlite-db
-   [script data]
-   {:multi? true}))
+  (jdbc/execute!
+   ds
+   (into [script] data)
+   {:builder-fn rs/as-unqualified-lower-maps}))
 
 (defn makeGeoCoordinate
   [data]
@@ -41,43 +35,43 @@
     ;;for now just ids
     #(-> % :feeder_circuit_operational_ids (.split ","))
     :zone]
-   
-   :powerTranformer 
+
+   :powerTranformer
    [:id :description makeGeoCoordinate]
 
    :switch
-   [:id :description :feeder_circuit_operational_id 
+   [:id :description :feeder_circuit_operational_id
     :switch_classification makeGeoCoordinate]
 
-   :tower 
+   :tower
    [:id :description
     :feeder_circuit_operational_id makeGeoCoordinate
     :zone :height]
 
    :wire
-   [:id 
-    :description 
+   [:id
+    :description
     :feeder_circuit_operational_id
-    :network 
+    :network
     :wire_specification
     :wire_gauge
-    :zone 
+    :zone
     #(->GeoCoordinate (:latitude1 %) (:longitude1 %))
     #(->GeoCoordinate (:latitude2 %) (:longitude2 %))
     :wire_length]
 
    ;;Tree Management
-   :operationalBase 
+   :operationalBase
    [:id :name makeGeoCoordinate]
 
-   :serviceOrder 
+   :serviceOrder
    [:id :description :classification :tree_pruning_id :observation]
 
-   :team 
+   :team
    [:id :name :services_classification]
 
-   :treePruning 
-   [:id :species :pole_id makeGeoCoordinate 
+   :treePruning
+   [:id :species :pole_id makeGeoCoordinate
     :pruning_date :height :diameter
     :distance_at :distance_bt :distance_mt]})
 
@@ -89,18 +83,20 @@
   [data type]
   (pmap #(apply (type make-entity) (getProjection % type)) data))
 
+;;TODO: make a execute with plan when do not need results back
+;;or even execute!-one
 (defn executeScript
   [dataRequest type script]
   (if (nil? type)
-    (executeNonQuery (script scripts) dataRequest)
-    (dataConverter (executeQuery (script scripts) dataRequest) type)))
+    (executeCommand (script scripts) dataRequest)
+    (dataConverter (executeCommand (script scripts) dataRequest) type)))
 
 (defn makeResponse
   [dataRequest type script]
   (try
     (DataResponse :ok
                   (executeScript dataRequest type script))
-    (catch Exception e 
+    (catch Exception e
       (DataResponse :error nil (vector (.getMessage e))))))
 
 (defn elementToVector
