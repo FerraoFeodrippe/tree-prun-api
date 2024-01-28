@@ -13,6 +13,8 @@
                  [org.clojure/data.json "2.5.0"]
                  [clj-http "3.12.3"]]
   :repl-options {:init-ns tree-prun-api.core}
-  profiles
-  {:dev {:dependencies [[ring/ring-mock "0.4.0"]]}})
+  :profiles
+  {:dev {:dependencies [[ring/ring-mock "0.4.0"]]
+         :source-paths ["src", "src.dev"]}
+   :prod {:source-paths ["src", "src.prod"]}})
   

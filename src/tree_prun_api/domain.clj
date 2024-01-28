@@ -2,13 +2,13 @@
   (:gen-class))
 
 ;;;; Commom
-(def DataResponseStatus #{:ok :error})
+(def data-response-status #{:ok :error})
 
-(defn DataResponse 
+(defn make-data-response
   ([status data]
-   (DataResponse status data nil))
+   (make-data-response status data nil))
   ([status data errors]
-   {:pre [(status DataResponseStatus)]}
+   {:pre [(status data-response-status)]}
    {:status status :data data :errors errors}))
 
 ;;;; ObjectValues
@@ -57,16 +57,6 @@
             geoCoordinate2
             wireLength])
 
-;;;;;;;; GIS Contracts
-(defprotocol AGisRepository
-  "Repository contract for GIS"
-  ;;(getFeederCircuits [this dataRequest])
-  (getPoles [this feeder_circuit_operational_id coords])
-  (getPowerTransformers [this coords])
-  (getSwitches [this feeder_circuit_operational_id coords])
-  (getTowers [this feeder_circuit_operational_id coords])
-  (getWires [this feeder_circuit_operational_id coords]))
-
 ;;;; Tree Management
 
 (defrecord OperationalBase
@@ -99,29 +89,16 @@
             treePruning
             observation])
 
-;;;;;;;; Tree Management Contracts
-
-(defprotocol ATreeRepository
-  "Repository contract for Trees"
-  (getTrees [dataRequest]))
-
-(defprotocol AServiceOrderRepository
-  "Repository contract for Services Orders"
-  (getServicesOrders [dataRequest])
-  (getTeams [dataRequest])
-  (getOperationalBases [dataRequest]))
-
-
 (def make-entity
   {;;GIS
-   :feederCircuit ->FeederCircuit
+   :feeder-circuit ->FeederCircuit
    :pole ->Pole
-   :powerTranformer ->PowerTransformer
+   :power-tranformer ->PowerTransformer
    :switch ->Switch
    :tower ->Tower
    :wire ->Wire
    ;;Tree Management
-   :operationalBase ->OperationalBase
+   :operational-nase ->OperationalBase
    :serviceOrder ->ServiceOrder
    :team ->Team
-   :treePruning ->TreePruning})
+   :tree-pruning ->TreePruning})

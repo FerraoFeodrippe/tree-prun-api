@@ -3,7 +3,7 @@
             [clojure.java.io])
   (:gen-class))
 
-(defn getScript
+(defn get-script
   ([typeName]
    [typeName
     (slurp 
@@ -14,38 +14,53 @@
         (str (name typeName) ".sql")) 
       .getPath))]))
 
-(def scriptBinds
-  [:getPoles
-   :getPolesFilterCoords
+(def script-binds
+ {:gis
+  [:get-poles
+   :get-poles-filter-coords
 
-   :getFeederCircuits
+   :get-feeder-circuits
 
-   :getPowerTranformers
-   :getPowerTranformersFilterCoords
+   :get-power-tranformers
+   :get-power-tranformers-filter-coords
 
-   :getSwitches
-   :getSwitchesFilterCoords
+   :get-switches
+   :get-switches-filter-coords
 
-   :getTowers
-   :getTowersFilterCoords
+   :get-towers
+   :get-towers-filter-coords
 
-   :getWires
-   :getWiresFilterCoords
-   
-   :insertPole])
+   :get-wires
+   :get-wires-filter-coords
 
-(def scripts  
-  (reduce
-   #(try
-      (conj % (getScript %2))
-      (catch Exception e
-        (println ";" (.getMessage e))
-        %))
-   {} scriptBinds))
+   :insert-pole]
+  
+  :tree-prun
+  [:get-service-orders]})
 
+(def scripts-binds-from
+   (->> script-binds
+        (reduce
+         #(into %
+                (reduce
+                 (fn [a b]
+                   (assoc a b (first %2)))
+                 {}
+                 (second %2)))
+         {})))
 
-
-
+ (def scripts
+  (->> script-binds
+       (reduce
+        #(into % (second %2))
+        [])
+       (reduce
+        #(try
+           (conj % (get-script %2))
+           (catch Exception e
+             (println ";" (.getMessage e))
+             %))
+        {})))
 
 
 
