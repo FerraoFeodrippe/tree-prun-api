@@ -99,7 +99,7 @@
 (defn make-system
   [{:keys [config]}]
   {:ds {:gis (jdbc/get-datasource (-> config :gis :db))
-        :tre-prun (jdbc/get-datasource (-> config :tree-prun :db))}
+        :tree-prun (jdbc/get-datasource (-> config :tree-prun :db))}
    :config config
    :scripts (make-scripts config)
    :scripts-binds-from (make-scripts-binds-from config)

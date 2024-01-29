@@ -74,10 +74,12 @@
       feeder-circuit-operational-id
       (coords-str-to-double coords))))
 
-  (POST "/tree_pruning" req
-    req)
+  (POST "/tree_pruning" {body :body}
+    (let [data (-> body slurp (json/read-str {:key-fn keyword}))]
+      (response
+       (r/insert-tree-pruning system data))))
 
-  (not-found "<h1>Page not found</h1>"))
+    (not-found "<h1>Page not found</h1>"))
 
 (def site
   (wrap-defaults
@@ -91,11 +93,12 @@
   (run-jetty site {:port 3000 :join? false}))
 
 (comment
+
   ;;;;some tests 
   system
-(let [config (-> "ENV" System/getProperty keyword c/make-config)]
-  (c/make-system {:config config
-                  :server-handler site}))
+  (let [config (-> "ENV" System/getProperty keyword c/make-config)]
+    (c/make-system {:config config
+                    :server-handler site}))
   (-> (http/request {:url "http://localhost:3000/poles/REC_01"
                      :method :get})
       :body
@@ -108,12 +111,13 @@
                                :pole_id			"1"
                                :latitude			"1"
                                :longitude			"1"
-                               :pruning_date		"2022-02"
+                               :pruning_date		"2022-02-02"
                                :height				"10"
                                :diameter			"1"
                                :distance_at		"2"
                                :distance_bt		"2"
-                               :distance_mt		"2"}})
+                               :distance_mt		"2"}
+                 :throw-exceptions false})
 
   (r/get-poles system "REC_01")
 
@@ -134,6 +138,7 @@
   (r/get-wires system "REC_01")
 
   (r/get-wires system "REC_01" [1.0 2.0 1.0 2.0])
+
   )
 
 

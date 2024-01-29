@@ -80,12 +80,12 @@
   (try
     (let [scripts-binds-from (:scripts-binds-from system)
           ds ((script scripts-binds-from) (:ds system))
-          result (execute-command ds (script (:scripts system)) dataRequest)]
-     (d/make-data-response
-      :ok
-      (if type
-        (dataConverter result type)
-        result)))
+          result (execute-command ds (script (:scripts system)) dataRequest)] 
+      (d/make-data-response
+       :ok
+       (if type
+         (dataConverter result type)
+         result)))
     (catch Exception e
       (d/make-data-response :error nil (vector (.getMessage e))))))
 
@@ -174,4 +174,29 @@
         "dataRequest has not the right number of parameters")))))
 
 (defn insert-tree-pruning
-  [request])
+  [system {:keys [species
+                  pole_id
+                  latitude
+                  longitude
+                  pruning_date
+                  height
+                  diameter
+                  distance_at
+                  distance_bt
+                  distance_mt]}]
+  (let [dataRequest (make-data-request species
+                                       pole_id
+                                       latitude
+                                       longitude
+                                       pruning_date
+                                       height
+                                       diameter
+                                       distance_at
+                                       distance_bt
+                                       distance_mt)]
+    (case (count dataRequest)
+      10 (execute-script system dataRequest nil :insert-tree-pruning)
+      (d/make-data-response
+       :error
+       nil
+       "dataRequest has not the right number of parameters"))))
