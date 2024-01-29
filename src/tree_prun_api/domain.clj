@@ -68,7 +68,7 @@
            [id
             name
             servicesClassification
-            operationalBases])
+            operationalBaseId])
 
 (defrecord TreePruning
            [id

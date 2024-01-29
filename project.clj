@@ -15,6 +15,6 @@
   :repl-options {:init-ns tree-prun-api.core}
   :profiles
   {:dev {:dependencies [[ring/ring-mock "0.4.0"]]
-         :source-paths ["src", "src.dev"]}
-   :prod {:source-paths ["src", "src.prod"]}})
+         :jvm-opts ["-DENV=dev"]}
+   :prod {:jvm-opts ["-DENV=prod"]}})
   

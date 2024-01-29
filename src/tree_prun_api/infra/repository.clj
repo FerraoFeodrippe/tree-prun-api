@@ -1,10 +1,8 @@
 (ns tree-prun-api.infra.repository
   (:require [tree-prun-api.domain :as d]
-            [tree-prun-api.infra.scripts :refer [scripts scripts-binds-from]]
             [next.jdbc :as jdbc]
             [next.jdbc.result-set :as rs]
-            [clojure.string :refer [blank?]]
-            [tree-prun-api.configurations :as config])
+            [clojure.string :refer [blank?]])
   (:gen-class))
 
 (defn- execute-command
@@ -77,13 +75,12 @@
   [data type]
   (pmap #(apply (type d/make-entity) (get-projection % type)) data))
 
-
-
 (defn- execute-script
-  [dataRequest type script]
+  [system dataRequest type script]
   (try
-    (let [ds ((scripts-binds-from script) config/map-ds)
-          result (execute-command ds (script scripts) dataRequest)]
+    (let [scripts-binds-from (:scripts-binds-from system)
+          ds ((script scripts-binds-from) (:ds system))
+          result (execute-command ds (script (:scripts system)) dataRequest)]
      (d/make-data-response
       :ok
       (if type
@@ -109,11 +106,11 @@
     (apply make-data-request restElements))))
 
 (defn get-poles
-  ([feeder-circuit-operational-id] 
-   (get-poles feeder-circuit-operational-id []))
-  ([feeder-circuit-operational-id coords] 
+  ([system feeder-circuit-operational-id] 
+   (get-poles system feeder-circuit-operational-id [])) 
+  ([system feeder-circuit-operational-id coords] 
    (let [dataRequest (make-data-request feeder-circuit-operational-id coords)
-         p-execute-script (partial execute-script dataRequest :pole)]
+         p-execute-script (partial execute-script system dataRequest :pole)]
      (case (count dataRequest)
        1 (p-execute-script :get-poles)
        5 (p-execute-script :get-poles-filter-coords)
@@ -123,9 +120,9 @@
         "dataRequest has not the right number of parameters")))))
 
 (defn get-power-transformers
-  [coords]
+  [system coords]
   (let [dataRequest (make-data-request coords)
-        p-execute-script (partial execute-script dataRequest :power-tranformer)]
+        p-execute-script (partial execute-script system dataRequest :power-tranformer)]
     (case (count dataRequest)
       0 (p-execute-script :get-power-tranformers)
       4 (p-execute-script :get-power-tranformers-filter-coords)
@@ -135,11 +132,11 @@
        "dataRequest has not the right number of parameters"))))
 
 (defn get-switches
-  ([feeder-circuit-operational-id]
-   (get-switches feeder-circuit-operational-id []))
-  ([feeder-circuit-operational-id coords]
+  ([system feeder-circuit-operational-id]
+   (get-switches system feeder-circuit-operational-id []))
+  ([system feeder-circuit-operational-id coords]
    (let [dataRequest (make-data-request feeder-circuit-operational-id coords)
-         p-execute-script (partial execute-script dataRequest :switch)]
+         p-execute-script (partial execute-script system dataRequest :switch)]
      (case (count dataRequest)
        1 (p-execute-script :get-switches)
        5 (p-execute-script :get-switches-filter-coords)
@@ -149,11 +146,11 @@
         "dataRequest has not the right number of parameters")))))
 
 (defn get-towers
-  ([feeder-circuit-operational-id]
-   (get-towers feeder-circuit-operational-id []))
-  ([feeder-circuit-operational-id coords]
+  ([system feeder-circuit-operational-id]
+   (get-towers system feeder-circuit-operational-id []))
+  ([system feeder-circuit-operational-id coords]
    (let [dataRequest (make-data-request feeder-circuit-operational-id coords)
-         p-execute-script (partial execute-script dataRequest :tower)]
+         p-execute-script (partial execute-script system dataRequest :tower)]
      (case (count dataRequest)
        1 (p-execute-script :get-towers)
        5 (p-execute-script :get-towers-filter-coords)
@@ -163,11 +160,11 @@
         "dataRequest has not the right number of parameters")))))
 
 (defn get-wires
-  ([feeder-circuit-operational-id]
-   (get-wires feeder-circuit-operational-id []))
-  ([feeder-circuit-operational-id coords]
+  ([system feeder-circuit-operational-id]
+   (get-wires system feeder-circuit-operational-id []))
+  ([system feeder-circuit-operational-id coords]
    (let [dataRequest (make-data-request feeder-circuit-operational-id coords)
-         p-execute-script (partial execute-script (into dataRequest coords) :wire)]
+         p-execute-script (partial execute-script system (into dataRequest coords) :wire)]
      (case (count dataRequest)
        1 (p-execute-script :get-wires)
        5 (p-execute-script :get-wires-filter-coords)
@@ -175,3 +172,6 @@
         :error
         nil
         "dataRequest has not the right number of parameters")))))
+
+(defn insert-tree-pruning
+  [request])

@@ -93,10 +93,10 @@ CREATE TABLE "Team" (
 CREATE TABLE "Team_OperationalBase" (
 	"team_id"	INTEGER NOT NULL,
 	"operational_base_id"	INTEGER NOT NULL,
+	PRIMARY KEY("team_id"),
 	FOREIGN KEY("team_id") REFERENCES "Team"("id"),
-	FOREIGN KEY("operational_base_id") REFERENCES "OperationalBase"("id"),
-	UNIQUE("team_id","operational_base_id")
-);
+	FOREIGN KEY("operational_base_id") REFERENCES "OperationalBase"("id")
+)
 
 CREATE TABLE "TreePruning" (
 	"id"	INTEGER,
@@ -119,10 +119,11 @@ CREATE TABLE "ServiceOrder" (
 	"description"	TEXT NOT NULL,
 	"classification"	TEXT NOT NULL,
 	"tree_pruning_id"	INTEGER,
+	"status"	TEXT NOT NULL,
 	"observation"	TEXT,
-	FOREIGN KEY("tree_pruning_id") REFERENCES "TreePruning"("id"),
-	PRIMARY KEY("id" AUTOINCREMENT)
-);
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("tree_pruning_id") REFERENCES "TreePruning"("id")
+)
 
 
 --index
