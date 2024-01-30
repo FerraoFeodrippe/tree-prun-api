@@ -73,8 +73,15 @@
       system
       feeder-circuit-operational-id
       (coords-str-to-double coords))))
+  
+  (GET "/trees_pruning/:feeder_circuit_operational_id"
+    {{feeder-circuit-operational-id  :feeder_circuit_operational_id} :params}
+    (response
+     (r/get-trees-pruning
+      system
+      feeder-circuit-operational-id)))
 
-  (POST "/tree_pruning" {body :body}
+  (POST "/trees_pruning" {body :body}
     (let [data (-> body slurp (json/read-str {:key-fn keyword}))]
       (response
        (r/insert-tree-pruning system data))))
@@ -104,7 +111,18 @@
       :body
       (json/read-str {:key-fn keyword}))
 
-  (http/request {:url "http://localhost:3000/tree_pruning"
+  (-> (http/request {:url "http://localhost:3000/trees_pruning/REC_01"
+                     :method :get})
+      :body
+      (json/read-str {:key-fn keyword}))
+
+  (-> (http/request {:url "http://localhost:3000/trees_pruning/REC_02"
+                     :method :get})
+      :body
+      (json/read-str {:key-fn keyword}))
+
+
+  (http/request {:url "http://localhost:3000/trees_pruning"
                  :method :post
                  :content-type :json
                  :form-params {:species			"s1"
@@ -116,7 +134,8 @@
                                :diameter			"1"
                                :distance_at		"2"
                                :distance_bt		"2"
-                               :distance_mt		"2"}
+                               :distance_mt		"2"
+                               :feeder_circuit_operational_id "REC_02"}
                  :throw-exceptions false})
 
   (r/get-poles system "REC_01")

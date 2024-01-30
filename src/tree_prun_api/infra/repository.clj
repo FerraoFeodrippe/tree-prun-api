@@ -65,7 +65,8 @@
    :tree-pruning
    [:id :species :pole_id make-geo-coordinate
     :pruning_date :height :diameter
-    :distance_at :distance_bt :distance_mt]})
+    :distance_at :distance_bt :distance_mt
+    :feeder_circuit_operational_id]})
 
 (defn- get-projection
   [data type]
@@ -109,9 +110,9 @@
   ([system feeder-circuit-operational-id] 
    (get-poles system feeder-circuit-operational-id [])) 
   ([system feeder-circuit-operational-id coords] 
-   (let [dataRequest (make-data-request feeder-circuit-operational-id coords)
-         p-execute-script (partial execute-script system dataRequest :pole)]
-     (case (count dataRequest)
+   (let [data-request (make-data-request feeder-circuit-operational-id coords)
+         p-execute-script (partial execute-script system data-request :pole)]
+     (case (count data-request)
        1 (p-execute-script :get-poles)
        5 (p-execute-script :get-poles-filter-coords)
        (d/make-data-response
@@ -121,9 +122,9 @@
 
 (defn get-power-transformers
   [system coords]
-  (let [dataRequest (make-data-request coords)
-        p-execute-script (partial execute-script system dataRequest :power-tranformer)]
-    (case (count dataRequest)
+  (let [data-request (make-data-request coords)
+        p-execute-script (partial execute-script system data-request :power-tranformer)]
+    (case (count data-request)
       0 (p-execute-script :get-power-tranformers)
       4 (p-execute-script :get-power-tranformers-filter-coords)
       (d/make-data-response
@@ -135,9 +136,9 @@
   ([system feeder-circuit-operational-id]
    (get-switches system feeder-circuit-operational-id []))
   ([system feeder-circuit-operational-id coords]
-   (let [dataRequest (make-data-request feeder-circuit-operational-id coords)
-         p-execute-script (partial execute-script system dataRequest :switch)]
-     (case (count dataRequest)
+   (let [data-request (make-data-request feeder-circuit-operational-id coords)
+         p-execute-script (partial execute-script system data-request :switch)]
+     (case (count data-request)
        1 (p-execute-script :get-switches)
        5 (p-execute-script :get-switches-filter-coords)
        (d/make-data-response
@@ -149,9 +150,9 @@
   ([system feeder-circuit-operational-id]
    (get-towers system feeder-circuit-operational-id []))
   ([system feeder-circuit-operational-id coords]
-   (let [dataRequest (make-data-request feeder-circuit-operational-id coords)
-         p-execute-script (partial execute-script system dataRequest :tower)]
-     (case (count dataRequest)
+   (let [data-request (make-data-request feeder-circuit-operational-id coords)
+         p-execute-script (partial execute-script system data-request :tower)]
+     (case (count data-request)
        1 (p-execute-script :get-towers)
        5 (p-execute-script :get-towers-filter-coords)
        (d/make-data-response
@@ -163,15 +164,27 @@
   ([system feeder-circuit-operational-id]
    (get-wires system feeder-circuit-operational-id []))
   ([system feeder-circuit-operational-id coords]
-   (let [dataRequest (make-data-request feeder-circuit-operational-id coords)
-         p-execute-script (partial execute-script system (into dataRequest coords) :wire)]
-     (case (count dataRequest)
+   (let [data-request (make-data-request feeder-circuit-operational-id coords)
+         p-execute-script (partial execute-script system (into data-request coords) :wire)]
+     (case (count data-request)
        1 (p-execute-script :get-wires)
        5 (p-execute-script :get-wires-filter-coords)
        (d/make-data-response
         :error
         nil
         "dataRequest has not the right number of parameters")))))
+
+(defn get-trees-pruning
+  [system feeder-circuit-operational-id]
+  (prn feeder-circuit-operational-id)
+  (let [data-request (make-data-request feeder-circuit-operational-id)
+        p-execute-script (partial execute-script system data-request :tree-pruning)]
+    (case (count data-request)
+      1 (p-execute-script :get-trees-pruning)
+      (d/make-data-response
+       :error
+       nil
+       "dataRequest has not the right number of parameters"))))
 
 (defn insert-tree-pruning
   [system {:keys [species
@@ -183,7 +196,8 @@
                   diameter
                   distance_at
                   distance_bt
-                  distance_mt]}]
+                  distance_mt
+                  feeder_circuit_operational_id]}]
   (let [dataRequest (make-data-request species
                                        pole_id
                                        latitude
@@ -193,9 +207,10 @@
                                        diameter
                                        distance_at
                                        distance_bt
-                                       distance_mt)]
+                                       distance_mt
+                                       feeder_circuit_operational_id)]
     (case (count dataRequest)
-      10 (execute-script system dataRequest nil :insert-tree-pruning)
+      11 (execute-script system dataRequest nil :insert-tree-pruning)
       (d/make-data-response
        :error
        nil

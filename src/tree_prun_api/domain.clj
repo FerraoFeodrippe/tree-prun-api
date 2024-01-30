@@ -21,72 +21,73 @@
 (defrecord Pole 
            [id
             description
-            geoCoordinate
-            feederCircuits
+            geo_coordinate
+            feeder_circuits
             zone])
 
 (defrecord PowerTransformer
            [id
             description
-            geoCoordinate])
+            geo_coordinate])
 
 (defrecord Switch
            [id
             description
-            feederCircuit 
-            switchClassification
-            geoCoordinate])
+            feeder_circuit 
+            switch_classification
+            geo_coordinate])
 
 (defrecord Tower
            [id
             description
-            feederCircuit 
-            geoCoordinate
+            feeder_Circuit 
+            geo_coordinate
             zone
             height])
 
 (defrecord Wire
            [id
             description 
-            feederCircuit
+            feeder_circuit
             network
-            wireSpecification
+            wire_specification
             wireGauge
             zone
-            geoCoordinate1
-            geoCoordinate2
-            wireLength])
+            geo_coordinate1
+            geo_coordinate2
+            wire_length])
 
 ;;;; Tree Management
 
 (defrecord OperationalBase
            [id
             name
-            geoCoordinate])
+            geo_coordinate])
 
 (defrecord Team
            [id
             name
-            servicesClassification
-            operationalBaseId])
+            services_classification
+            operational_base_id])
 
 (defrecord TreePruning
            [id
             species
             pole
-            geoCoordinate
+            geo_coordinate
             pruningDate
             height
             diameter
-            distanceAt
-            distanceBt
-            distanceMt])
+            distance_at
+            distance_bt
+            distance_mt
+            feeder_circuit])
 
 (defrecord ServiceOrder
            [id
             description
             classification
-            treePruning
+            tree_pruning
             observation])
 
 (def make-entity

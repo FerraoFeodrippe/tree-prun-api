@@ -110,8 +110,10 @@ CREATE TABLE "TreePruning" (
 	"distance_at"	NUMERIC NOT NULL,
 	"distance_bt"	NUMERIC NOT NULL,
 	"distance_mt"	NUMERIC NOT NULL,
+	"feeder_circuit_operational_id"	INTEGER NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("pole_id") REFERENCES "Pole"("id"),
-	PRIMARY KEY("id" AUTOINCREMENT)
+	FOREIGN KEY("feeder_circuit_operational_id") REFERENCES "FeederCircuit"("operational_id")
 );
 
 CREATE TABLE "ServiceOrder" (
@@ -119,12 +121,12 @@ CREATE TABLE "ServiceOrder" (
 	"description"	TEXT NOT NULL,
 	"classification"	TEXT NOT NULL,
 	"tree_pruning_id"	INTEGER,
-	"status"	TEXT NOT NULL,
 	"observation"	TEXT,
-	PRIMARY KEY("id" AUTOINCREMENT),
-	FOREIGN KEY("tree_pruning_id") REFERENCES "TreePruning"("id")
+	"status"	TEXT NOT NULL,
+	"date_created"	TEXT NOT NULL,
+	FOREIGN KEY("tree_pruning_id") REFERENCES "TreePruning"("id"),
+	PRIMARY KEY("id" AUTOINCREMENT)
 )
-
 
 --index
 
@@ -182,3 +184,7 @@ CREATE INDEX "Tower_lat_long_index" ON "Tower" (
 	"latitude",
 	"longitude"
 );
+
+CREATE INDEX "ServiceOrder_date_created_index" ON "ServiceOrder" (
+	"date_created"	DESC
+)
