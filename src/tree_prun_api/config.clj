@@ -41,6 +41,7 @@
       (assoc-in
        [:tree-prun :script-binds]
        [:get-service-orders
+        :insert-service-order
 
         :get-teams
 

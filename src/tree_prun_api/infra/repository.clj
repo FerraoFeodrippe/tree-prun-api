@@ -57,7 +57,7 @@
    [:id :name make-geo-coordinate]
 
    :service-order
-   [:id :description :classification :tree_pruning_id :observation]
+   [:id :description :classification :tree_pruning_id :status :observation]
 
    :team
    [:id :name :services_classification]
@@ -176,7 +176,6 @@
 
 (defn get-trees-pruning
   [system feeder-circuit-operational-id]
-  (prn feeder-circuit-operational-id)
   (let [data-request (make-data-request feeder-circuit-operational-id)
         p-execute-script (partial execute-script system data-request :tree-pruning)]
     (case (count data-request)
@@ -198,7 +197,7 @@
                   distance_bt
                   distance_mt
                   feeder_circuit_operational_id]}]
-  (let [dataRequest (make-data-request species
+  (let [data-request (make-data-request species
                                        pole_id
                                        latitude
                                        longitude
@@ -209,8 +208,40 @@
                                        distance_bt
                                        distance_mt
                                        feeder_circuit_operational_id)]
-    (case (count dataRequest)
-      11 (execute-script system dataRequest nil :insert-tree-pruning)
+    (case (count data-request)
+      11 (execute-script system data-request nil :insert-tree-pruning)
+      (d/make-data-response
+       :error
+       nil
+       "dataRequest has not the right number of parameters"))))
+
+(defn get-service-orders
+  [system]
+  (let [data-request []
+        p-execute-script (partial execute-script system data-request :service-order)]
+    (case (count data-request)
+      0 (p-execute-script :get-service-orders)
+      (d/make-data-response
+       :error
+       nil
+       "dataRequest has not the right number of parameters"))))
+
+(defn insert-service-order
+  [system {:keys [description
+                  classification
+                  tree_pruning_id
+                  observation
+                  status
+                  date_created]}]
+  (let [data-request (make-data-request description
+                                       classification
+                                       tree_pruning_id
+                                       observation
+                                       status
+                                       date_created)]
+    
+    (case (count data-request)
+      6 (execute-script system data-request nil :insert-service-order)
       (d/make-data-response
        :error
        nil

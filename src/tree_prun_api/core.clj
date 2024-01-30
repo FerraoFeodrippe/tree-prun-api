@@ -73,7 +73,7 @@
       system
       feeder-circuit-operational-id
       (coords-str-to-double coords))))
-  
+
   (GET "/trees_pruning/:feeder_circuit_operational_id"
     {{feeder-circuit-operational-id  :feeder_circuit_operational_id} :params}
     (response
@@ -81,12 +81,24 @@
       system
       feeder-circuit-operational-id)))
 
-  (POST "/trees_pruning" {body :body}
+  (POST "/trees_pruning/create" {body :body}
     (let [data (-> body slurp (json/read-str {:key-fn keyword}))]
       (response
        (r/insert-tree-pruning system data))))
 
-    (not-found "<h1>Page not found</h1>"))
+    (GET "/service_orders"
+    {}
+    (response
+     (r/get-service-orders system)))
+
+  (POST "/services_order/create" {body :body}
+    (let [data (-> body slurp (json/read-str {:key-fn keyword}))
+          date-created (new java.util.Date)]
+      (response
+       (r/insert-service-order system
+                               (assoc data :date_created date-created)))))
+
+  (not-found "<h1>Page not found</h1>"))
 
 (def site
   (wrap-defaults
@@ -121,8 +133,14 @@
       :body
       (json/read-str {:key-fn keyword}))
 
+  (-> (http/request {:url "http://localhost:3000/service_orders"
+                     :method :get
+                     :throw-exceptions false})
+      :body
+      (json/read-str {:key-fn keyword}))
 
-  (http/request {:url "http://localhost:3000/trees_pruning"
+
+  (http/request {:url "http://localhost:3000/trees_pruning/create"
                  :method :post
                  :content-type :json
                  :form-params {:species			"s1"
@@ -135,8 +153,16 @@
                                :distance_at		"2"
                                :distance_bt		"2"
                                :distance_mt		"2"
-                               :feeder_circuit_operational_id "REC_02"}
-                 :throw-exceptions false})
+                               :feeder_circuit_operational_id "REC_02"}})
+
+  (http/request {:url "http://localhost:3000/services_order/create"
+                 :method :post
+                 :content-type :json
+                 :form-params {:description			"service order 1"
+                               :classification			"Pode"
+                               :tree_pruning_id		"99"
+                               :observation			"need check date avaliable"
+                               :status		"0"}})
 
   (r/get-poles system "REC_01")
 

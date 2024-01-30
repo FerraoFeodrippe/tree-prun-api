@@ -88,6 +88,7 @@
             description
             classification
             tree_pruning
+            status
             observation])
 
 (def make-entity
@@ -100,6 +101,6 @@
    :wire ->Wire
    ;;Tree Management
    :operational-nase ->OperationalBase
-   :serviceOrder ->ServiceOrder
+   :service-order ->ServiceOrder
    :team ->Team
    :tree-pruning ->TreePruning})
