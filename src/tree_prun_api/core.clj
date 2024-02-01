@@ -86,8 +86,7 @@
       (response
        (r/insert-tree-pruning system data))))
 
-    (GET "/service_orders"
-    {}
+  (GET "/service_orders" {}
     (response
      (r/get-service-orders system)))
 
@@ -97,6 +96,14 @@
       (response
        (r/insert-service-order system
                                (assoc data :date_created date-created)))))
+
+  (GET "/teams" {}
+    (response
+     (r/get-teams system)))
+
+  (GET "/operational_bases" {}
+    (response
+     (r/get-operational-bases system)))
 
   (not-found "<h1>Page not found</h1>"))
 
@@ -139,6 +146,18 @@
       :body
       (json/read-str {:key-fn keyword}))
 
+  (-> (http/request {:url "http://localhost:3000/teams"
+                     :method :get
+                     :throw-exceptions false})
+      :body
+      (json/read-str {:key-fn keyword}))
+
+  (-> (http/request {:url "http://localhost:3000/operational_bases"
+                     :method :get
+                     :throw-exceptions false})
+      :body
+      (json/read-str {:key-fn keyword}))
+
 
   (http/request {:url "http://localhost:3000/trees_pruning/create"
                  :method :post
@@ -158,9 +177,9 @@
   (http/request {:url "http://localhost:3000/services_order/create"
                  :method :post
                  :content-type :json
-                 :form-params {:description			"service order 1"
+                 :form-params {:description			"service order 2"
                                :classification			"Pode"
-                               :tree_pruning_id		"99"
+                               :tree_pruning_id		"1"
                                :observation			"need check date avaliable"
                                :status		"0"}})
 
@@ -184,6 +203,26 @@
 
   (r/get-wires system "REC_01" [1.0 2.0 1.0 2.0])
 
+  (api-methods)
+
+  ;;;; sliding-window
+  (def input ["a", "b", "c", "b", "a", "d", "c", "a", "e", "a", "a", "b", "e"])
+  (def compare-value #{"b", "c", "e"})
+
+  (partition 10 12 nil input)
+
+  (defn shortest-subseq [test-set coll]
+    (let [matching
+          (fn [ss]
+            (when
+             (every? (fn [p] (some #(= p %) ss)) test-set)
+              ss))]
+      (loop [part-size (count test-set)]
+        (when (<= part-size (count coll))
+          (or (some matching (partition part-size 1 coll))
+              (recur (inc part-size)))))))
+
+  (shortest-subseq compare-value input)
   )
 
 

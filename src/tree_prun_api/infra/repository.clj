@@ -60,7 +60,7 @@
    [:id :description :classification :tree_pruning_id :status :observation]
 
    :team
-   [:id :name :services_classification]
+   [:id :name :services_classification :operational_base_id]
 
    :tree-pruning
    [:id :species :pole_id make-geo-coordinate
@@ -242,6 +242,28 @@
     
     (case (count data-request)
       6 (execute-script system data-request nil :insert-service-order)
+      (d/make-data-response
+       :error
+       nil
+       "dataRequest has not the right number of parameters"))))
+
+(defn get-teams
+  [system]
+  (let [data-request []
+        p-execute-script (partial execute-script system data-request :team)]
+    (case (count data-request)
+      0 (p-execute-script :get-teams)
+      (d/make-data-response
+       :error
+       nil
+       "dataRequest has not the right number of parameters"))))
+
+(defn get-operational-bases
+  [system]
+  (let [data-request []
+        p-execute-script (partial execute-script system data-request :operational-base)]
+    (case (count data-request)
+      0 (p-execute-script :get-operational-bases)
       (d/make-data-response
        :error
        nil

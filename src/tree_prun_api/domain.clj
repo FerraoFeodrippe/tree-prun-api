@@ -100,7 +100,7 @@
    :tower ->Tower
    :wire ->Wire
    ;;Tree Management
-   :operational-nase ->OperationalBase
+   :operational-base ->OperationalBase
    :service-order ->ServiceOrder
    :team ->Team
    :tree-pruning ->TreePruning})
